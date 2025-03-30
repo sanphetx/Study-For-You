@@ -33,8 +33,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
-    _timer.cancel(); 
-    _controller.dispose(); 
+    _timer.cancel();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -51,24 +51,80 @@ class _HomePageState extends State<HomePage> {
   void showPopupToSaveNote() {
     showDialog(
       context: context,
+      barrierDismissible: false, // ✅ ป้องกันกดข้างนอกแล้ว Popup หาย
       builder: (context) {
-        return AlertDialog(
-          title: const Text("เพิ่มบันทึก"),
-          content: TextField(
-            controller: _controller,
-            decoration: const InputDecoration(hintText: "กรอกข้อความที่ต้องการบันทึก"),
-            keyboardType: TextInputType.multiline,
+        return Dialog(
+          shape: RoundedRectangleBorder(
+              borderRadius:
+                  BorderRadius.circular(20)), // ✅ ทำให้ Popup มีมุมโค้ง
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.edit_note,
+                    size: 60, color: Colors.blueAccent), // ✅ ไอคอนด้านบน
+                const SizedBox(height: 10),
+                const Text(
+                  "เพิ่มบันทึกใหม่",
+                  style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: _controller,
+                  decoration: InputDecoration(
+                    labelText: "กรอกข้อความที่ต้องการบันทึก",
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    filled: true,
+                    fillColor: Colors.grey[100],
+                  ),
+                  keyboardType: TextInputType.multiline,
+                  maxLines: 3,
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.close, color: Colors.white),
+                      label: const Text("ยกเลิก"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.redAccent,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 12),
+                      ),
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        saveNote();
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(Icons.save, color: Colors.white),
+                      label: const Text("บันทึก"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blueAccent,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 12),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: const Text("ยกเลิก")),
-            TextButton(onPressed: () { saveNote(); Navigator.pop(context); }, child: const Text("บันทึก")),
-          ],
         );
       },
     );
   }
-
-  
 
   Widget buildNoteSection() {
     return Container(
@@ -79,18 +135,33 @@ class _HomePageState extends State<HomePage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: const [BoxShadow(color: Colors.grey, blurRadius: 5, spreadRadius: 1)],
+        boxShadow: const [
+          BoxShadow(color: Colors.grey, blurRadius: 5, spreadRadius: 1)
+        ],
       ),
       child: notedata.isNotEmpty
           ? Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(notedata[dataindex].noteName, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue)),
-                Text("สิ้นสุดวันที่: ${notedata[dataindex].dateTimeNote.toLocal().toString().split(' ')[0]}", style: const TextStyle(fontSize: 14, color: Colors.black54)),
-                Text("ประเภท: ${notedata[dataindex].type.detail}", style: const TextStyle(fontSize: 14, color: Colors.black54)),
+                Text(notedata[dataindex].noteName,
+                    style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue)),
+                Text(
+                    "สิ้นสุดวันที่: ${notedata[dataindex].dateTimeNote.toLocal().toString().split(' ')[0]}",
+                    style:
+                        const TextStyle(fontSize: 14, color: Colors.black54)),
+                Text("ประเภท: ${notedata[dataindex].type.detail}",
+                    style:
+                        const TextStyle(fontSize: 14, color: Colors.black54)),
               ],
             )
-          : const Text("No notes available", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey)),
+          : const Text("No notes available",
+              style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey)),
     );
   }
 
@@ -98,8 +169,11 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Study For You",style: TextStyle(
-              color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+        title: const Text("Study For You",
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+                fontWeight: FontWeight.bold)),
         backgroundColor: Colors.blue,
         centerTitle: true,
       ),
@@ -111,8 +185,13 @@ class _HomePageState extends State<HomePage> {
             padding: const EdgeInsets.all(15),
             decoration: const BoxDecoration(
               color: Colors.blueAccent,
-              borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
-              boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 10, spreadRadius: 2)],
+              borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(30),
+                  bottomRight: Radius.circular(30)),
+              boxShadow: [
+                BoxShadow(
+                    color: Colors.black26, blurRadius: 10, spreadRadius: 2)
+              ],
             ),
             child: Column(
               children: [
@@ -128,65 +207,75 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           const SizedBox(height: 20),
-         
-Container(
-  padding: const EdgeInsets.all(20),
-  margin: const EdgeInsets.all(10),
-  alignment: Alignment.center,
-  decoration: const BoxDecoration(
-    color: Colors.blueAccent,
-    borderRadius: BorderRadius.all(Radius.circular(20)),
-    boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8, spreadRadius: 2)],
-  ),
-  child: Wrap(
-    spacing: 20,
-    children: [
-      ElevatedButton(
-        onPressed: () async {
-          final newNote = await Navigator.push(context, MaterialPageRoute(builder: (context) => const AddForm()));
-          if (newNote != null && newNote is Note) {
-            setState(() {
-              notedata.add(newNote);
-            });
-          }
-        },
-        style: ElevatedButton.styleFrom(
-          foregroundColor: Colors.blueAccent,  
-          backgroundColor: Colors.white,  
-          padding: const EdgeInsets.all(12),  
-          shape: const CircleBorder(),  
-        ),
-        child: const Icon(Icons.add_box_rounded, size: 30),  
-      ),
-      ElevatedButton(
-        onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => const LibraryPage()));
-        },
-        style: ElevatedButton.styleFrom(
-          foregroundColor: Colors.blueAccent,
-          backgroundColor: Colors.white,
-          padding: const EdgeInsets.all(12),
-          shape: const CircleBorder(),
-        ),
-        child: const Icon(Icons.library_books, size: 30),
-      ),
-      ElevatedButton(
-        onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => const ReadingTimerPage()));
-        },
-        style: ElevatedButton.styleFrom(
-          foregroundColor: Colors.blueAccent,
-          backgroundColor: Colors.white,
-          padding: const EdgeInsets.all(12),
-          shape: const CircleBorder(),
-        ),
-        child: const Icon(Icons.timer, size: 30),
-      ),
-    ],
-  ),
-),
 
-          
+          Container(
+            padding: const EdgeInsets.all(20),
+            margin: const EdgeInsets.all(10),
+            alignment: Alignment.center,
+            decoration: const BoxDecoration(
+              color: Colors.blueAccent,
+              borderRadius: BorderRadius.all(Radius.circular(20)),
+              boxShadow: [
+                BoxShadow(color: Colors.black12, blurRadius: 8, spreadRadius: 2)
+              ],
+            ),
+            child: Wrap(
+              spacing: 20,
+              children: [
+                ElevatedButton(
+                  onPressed: () async {
+                    final newNote = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const AddForm()));
+                    if (newNote != null && newNote is Note) {
+                      setState(() {
+                        notedata.add(newNote);
+                      });
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.blueAccent,
+                    backgroundColor: Colors.white,
+                    padding: const EdgeInsets.all(12),
+                    shape: const CircleBorder(),
+                  ),
+                  child: const Icon(Icons.add_box_rounded, size: 30),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const LibraryPage()));
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.blueAccent,
+                    backgroundColor: Colors.white,
+                    padding: const EdgeInsets.all(12),
+                    shape: const CircleBorder(),
+                  ),
+                  child: const Icon(Icons.library_books, size: 30),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ReadingTimerPage()));
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.blueAccent,
+                    backgroundColor: Colors.white,
+                    padding: const EdgeInsets.all(12),
+                    shape: const CircleBorder(),
+                  ),
+                  child: const Icon(Icons.timer, size: 30),
+                ),
+              ],
+            ),
+          ),
+
           Container(
             width: double.infinity,
             height: 500,
@@ -195,7 +284,9 @@ Container(
             decoration: const BoxDecoration(
               color: Colors.blueAccent,
               borderRadius: BorderRadius.all(Radius.circular(20)),
-              boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8, spreadRadius: 2)],
+              boxShadow: [
+                BoxShadow(color: Colors.black12, blurRadius: 8, spreadRadius: 2)
+              ],
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -204,12 +295,28 @@ Container(
                 ElevatedButton(
                   onPressed: showPopupToSaveNote,
                   style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.black,
-                    backgroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                    backgroundColor: Colors.white, // เปลี่ยนเป็นสีขาว
+                    foregroundColor: Colors.blueAccent, // เปลี่ยนสีข้อความ
+                    elevation: 5, // เพิ่มเงา
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20), // ทำให้ขอบโค้งมน
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 40, vertical: 15),
                   ),
-                  child: const Text("เพิ่มบันทึก", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.add,
+                          color: Colors.blueAccent), // ไอคอนเพิ่มบันทึก
+                      SizedBox(width: 10),
+                      Text(
+                        "เพิ่มบันทึก",
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 20),
                 Expanded(
@@ -217,20 +324,65 @@ Container(
                     itemCount: savedNotes.length,
                     itemBuilder: (context, index) {
                       return Container(
-                        margin: const EdgeInsets.symmetric(vertical: 8),
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 10),
+                        padding: const EdgeInsets.all(15),
                         decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(15),
-                          boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 6, spreadRadius: 1)],
+                          color: Colors.white, // เปลี่ยนเป็นสีขาว
+                          borderRadius:
+                              BorderRadius.circular(15), // ทำให้โค้งมน
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 6,
+                              spreadRadius: 2,
+                            ),
+                          ],
                         ),
-                        child: ListTile(
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                          title: Text(savedNotes[index], style: const TextStyle(fontSize: 16, color: Colors.black87, fontWeight: FontWeight.w600)),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Icon(Icons.note,
+                                color: Colors.blueAccent, size: 28),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    savedNotes[index].split("\n")[0],
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    savedNotes[index].split("\n")[1],
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete,
+                                  color: Colors.redAccent),
+                              onPressed: () {
+                                setState(() {
+                                  savedNotes.removeAt(index);
+                                });
+                              },
+                            ),
+                          ],
                         ),
                       );
                     },
                   ),
-                ),
+                )
               ],
             ),
           ),
